@@ -1,6 +1,15 @@
 """Generate Markov text from text files."""
+import sys
 
 from random import choice
+
+#hello my name is Maily my name jon hi
+#(hello, my) =  [name]
+#(my, name) = [is, jon]
+#(name, is) = [Maily]
+#(is, Maily) = [my]
+#(Maily, my) = [name]
+#(my, name) = we have it as a key already then append it to the key 
 
 
 def open_and_read_file(file_path):
@@ -43,41 +52,69 @@ def make_chains(text_string):
         [None]
     """
 
+    #we made it a dictionary because we want to call it back but we are using 
     chains = {}
 
-    # open_and_read_file = text_string
+    
+    #Splitting my text into a list by each word
+    each_word = text_string.split()
 
-    each_word = open_and_read_file('green-eggs.txt').split()
-   
+#['Would', 'you', 'could', 'you', 'in', 'a', 'house?', 'Would', 'you', 'could', 'you', 'with', 'a',
+#[''mouse?', 'Would', 'you', 'could', 'you', 'in', 'a', 'box?', 'Would', 'you', 'could', 'you',
+#[''with', 'a', 'fox?', 'Would', 'you', 'like', 'green', 'eggs', 'and', 'ham?', 'Would', 'you',
+#[''like', 'them,', 'Sam', 'I', 'am?']
+
+    
+    #Loop through your list and It will stop at 'Sam' (-2) since we want to look in pairs
     for i in range(len(each_word) -2):
+    #key = ('Would', 'you') since we want a pair
         key = (each_word[i], each_word[i+1])
+        #word = 'could' which is a string
         word = each_word[i + 2]
-
-        # chains[key] = value 
-    # chains[key] = value 
-
+        #if key is not in my dictionary then:
         if key not in chains:
+        #we want to append the value key thats in my dictionary ['Would', 'you'] to new list 
+        #we want to create a new list everytime we dont have the key 
             chains[key] = []
+            #this will add a value to key 
+            # ('would', 'you') -> []
 
+        #since the value is now a list we can append the string from variable word
         chains[key].append(word)
-
+        #'could'
     return chains
    
 
 def make_text(chains):
     """Return text from chains."""
-    key = choice(list((chains.keys())))
-    words = []
 
-  
+    #choice = random pair 
+    #chains.key() = access all my keys in my dictionary which are tuples
+    #list() =turns my tuples into lists
+    # ex = ['Would', 'you']
+    key = choice(list(chains.keys()))
+    #getting the first two indeces from my previous list
+    words = [key[0], key[1]]
+    
 
-    print(key)
+    while True:
+        #We want to start with the last set of keys 
+        #key = ('would, 'you') 
+        key = (words[-2], words[-1])
+
+        if key not in chains:
+            break 
+        #Acessing the value, randomly     
+        value= choice(chains[key])
+
+        words.append(value)
+        #('would','you','like')
 
 
     return " ".join(words)
 
 
-input_path = "green-eggs.txt"
+input_path = sys.argv[1]
 
 # Open the file and turn it into one long string
 input_text = open_and_read_file(input_path)
